@@ -29,9 +29,6 @@ int main( int argc, const char * argv[] )
     if (!glfwInit())
         exit(1);
 
-    // Initialize RCC++
-    RCCppInit();
-
     GLFWwindow* window = glfwCreateWindow(1280, 720, "CMake RCC++ Dear ImGui starter", NULL, NULL);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
@@ -43,6 +40,9 @@ int main( int argc, const char * argv[] )
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL2_Init();
 
+    // Initialize RCC++
+    RCCppInit();
+
     // Setup style
     ImGui::StyleColorsDark();
 
@@ -51,13 +51,13 @@ int main( int argc, const char * argv[] )
     {
         glfwPollEvents();
 
+        // Update RCC++
+        RCCppUpdate();
+
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL2_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-
-        // Update RCC++
-        RCCppUpdate();
 
         // Call the function in our RCC++ class
         g_SystemTable.pRCCppMainLoopI->MainLoop();
