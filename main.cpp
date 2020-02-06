@@ -16,7 +16,6 @@
 #include "RCCppMainLoop.h"
 
 // RCC++ Data
-static IRuntimeObjectSystem*	g_pRuntimeObjectSystem;
 static StdioLogSystem           g_Logger;
 static SystemTable              g_SystemTable;
 
@@ -87,41 +86,41 @@ bool RCCppInit()
 {
     g_SystemTable.pImContext = ImGui::GetCurrentContext();
 
-    g_pRuntimeObjectSystem = new RuntimeObjectSystem;
-    if( !g_pRuntimeObjectSystem->Initialise(&g_Logger, &g_SystemTable) )
+    g_SystemTable.pRuntimeObjectSystem = new RuntimeObjectSystem;
+    if( !g_SystemTable.pRuntimeObjectSystem->Initialise(&g_Logger, &g_SystemTable) )
     {
-        delete g_pRuntimeObjectSystem;
-        g_pRuntimeObjectSystem = 0;
+        delete g_SystemTable.pRuntimeObjectSystem;
+        g_SystemTable.pRuntimeObjectSystem = 0;
         return false;
     }
 
-    g_pRuntimeObjectSystem->CleanObjectFiles();
+    g_SystemTable.pRuntimeObjectSystem->CleanObjectFiles();
 
     // ensure include directories are set - use location of this file as starting point
-    FileSystemUtils::Path basePath = g_pRuntimeObjectSystem->FindFile( __FILE__ ).ParentPath();
+    FileSystemUtils::Path basePath = g_SystemTable.pRuntimeObjectSystem->FindFile( __FILE__ ).ParentPath();
     FileSystemUtils::Path imguiIncludeDir = basePath / "imgui";
-    g_pRuntimeObjectSystem->AddIncludeDir( imguiIncludeDir.c_str() );
+    g_SystemTable.pRuntimeObjectSystem->AddIncludeDir( imguiIncludeDir.c_str() );
 
     return true;
 }
 
 void RCCppCleanup()
 {
-	delete g_pRuntimeObjectSystem;
+	delete g_SystemTable.pRuntimeObjectSystem;
 }
 
 void RCCppUpdate()
 {
     //check status of any compile
-    if( g_pRuntimeObjectSystem->GetIsCompiledComplete() )
+    if( g_SystemTable.pRuntimeObjectSystem->GetIsCompiledComplete() )
     {
         // load module when compile complete
-        g_pRuntimeObjectSystem->LoadCompiledModule();
+        g_SystemTable.pRuntimeObjectSystem->LoadCompiledModule();
     }
 
-    if( !g_pRuntimeObjectSystem->GetIsCompiling() )
+    if( !g_SystemTable.pRuntimeObjectSystem->GetIsCompiling() )
     {
         float deltaTime = 1.0f / ImGui::GetIO().Framerate;
-        g_pRuntimeObjectSystem->GetFileChangeNotifier()->Update( deltaTime );
+        g_SystemTable.pRuntimeObjectSystem->GetFileChangeNotifier()->Update( deltaTime );
     }
 }

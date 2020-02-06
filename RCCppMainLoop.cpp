@@ -3,6 +3,7 @@
 #include "RCCppMainLoop.h"
 #include "SystemTable.h"
 #include "ISimpleSerializer.h"
+#include "IRuntimeObjectSystem.h"
 
 #include "imgui.h"
 
@@ -28,6 +29,11 @@ struct RCCppMainLoop : RCCppMainLoopI, TInterface<IID_IRCCPP_MAIN_LOOP,IObject>
 {
     bool show_demo_window = true;
 
+    // data for compiling window
+    static constexpr double SHOW_AFTER_COMPILE_TIME = 3.0f;
+    double compileStartTime    = -SHOW_AFTER_COMPILE_TIME;
+    double compileEndTime      = -SHOW_AFTER_COMPILE_TIME;
+
     RCCppMainLoop()
     {
         PerModuleInterface::g_pSystemTable->pRCCppMainLoopI = this;
@@ -49,6 +55,8 @@ struct RCCppMainLoop : RCCppMainLoopI, TInterface<IID_IRCCPP_MAIN_LOOP,IObject>
     void Serialize( ISimpleSerializer *pSerializer ) override
     {
         SERIALIZE( show_demo_window );
+        SERIALIZE( compileStartTime );
+        SERIALIZE( compileEndTime );
     }
 
     void MainLoop() override
@@ -64,6 +72,59 @@ struct RCCppMainLoop : RCCppMainLoopI, TInterface<IID_IRCCPP_MAIN_LOOP,IObject>
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
+
+        // Show compiling info
+        double time = ImGui::GetTime();
+        bool bCompiling = g_pSys->pRuntimeObjectSystem->GetIsCompiling();
+        double timeSinceLastCompile = time - compileEndTime;
+        if( bCompiling  || timeSinceLastCompile < SHOW_AFTER_COMPILE_TIME )
+        {
+            if( bCompiling )
+            {
+                if( timeSinceLastCompile > SHOW_AFTER_COMPILE_TIME )
+                {
+                    compileStartTime = time;
+                }
+                compileEndTime = time; // ensure always updated
+            }
+            bool bCompileOk = g_pSys->pRuntimeObjectSystem->GetLastLoadModuleSuccess();
+
+            ImVec4 windowBgCol = ImVec4(0.1f,0.4f,0.1f,1.0f);
+            if( !bCompiling )
+            {
+                if( bCompileOk )
+                {
+                    windowBgCol = ImVec4(0.1f,0.7f,0.1f,1.0f);
+                }
+                else
+                {
+                    windowBgCol = ImVec4(0.7f,0.1f,0.1f,1.0f);
+                }
+            }
+            ImGui::PushStyleColor(ImGuiCol_WindowBg,windowBgCol);
+
+            ImVec2 sizeAppWindow = ImGui::GetIO().DisplaySize;
+            ImGui::SetNextWindowPos(ImVec2( sizeAppWindow.x - 300, sizeAppWindow.y - 50), ImGuiCond_Always );
+            ImGui::SetNextWindowSize(ImVec2(280,0), ImGuiCond_Always );
+            ImGui::Begin("Compiling", NULL, ImGuiWindowFlags_NoTitleBar );
+            if( bCompiling )
+            {
+                ImGui::Text("Compiling... time %.2fs", (float)(time - compileStartTime) );
+            }
+            else
+            {
+                if( bCompileOk )
+                {
+                    ImGui::Text("Compiling... time %.2fs. SUCCEED", (float)(compileEndTime - compileStartTime) );
+                }
+                else
+                {
+                    ImGui::Text("Compiling... time %.2fs. FAILED", (float)(compileEndTime - compileStartTime) );
+                }
+            }
+            ImGui::End();
+            ImGui::PopStyleColor();
+        }
     }
 };
 
