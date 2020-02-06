@@ -44,6 +44,7 @@ set( CMAKE-RCCPP-DEARIMGUI-STARTER-SRC
      main.cpp
      StdioLogSystem.h
      StdioLogSystem.cpp
+     RCCppMainLoop.h
      RCCppMainLoop.cpp
      )
 	 
