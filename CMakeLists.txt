@@ -46,6 +46,7 @@ set( CMAKE-RCCPP-DEARIMGUI-STARTER-SRC
      StdioLogSystem.cpp
      RCCppMainLoop.h
      RCCppMainLoop.cpp
+     SystemTable.h
      )
 	 
 add_executable( CMake-RCCpp-DearImGui-starter ${CMAKE-RCCPP-DEARIMGUI-STARTER-SRC} )

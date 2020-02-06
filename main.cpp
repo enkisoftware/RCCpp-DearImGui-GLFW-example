@@ -1,19 +1,24 @@
 #include <stdlib.h>
 
+// imgui headers
 #include <imgui.h>
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl2.h"
 
 #include <GLFW/glfw3.h>
 
+// RCC++ headers
 #include "RuntimeObjectSystem.h"
 
 // headers from our example 
 #include "StdioLogSystem.h"
+#include "SystemTable.h"
+#include "RCCppMainLoop.h"
 
 // RCC++ Data
 static IRuntimeObjectSystem*	g_pRuntimeObjectSystem;
 static StdioLogSystem           g_Logger;
+static SystemTable              g_SystemTable;
 
 bool RCCppInit();
 void RCCppCleanup();
@@ -54,6 +59,9 @@ int main( int argc, const char * argv[] )
         // Update RCC++
         RCCppUpdate();
 
+        // Call the function in our RCC++ class
+        g_SystemTable.pRCCppMainLoopI->MainLoop();
+
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         static bool show_demo_window = true;
         if (show_demo_window)
@@ -82,12 +90,23 @@ int main( int argc, const char * argv[] )
 
 bool RCCppInit()
 {
+    g_SystemTable.pImContext = ImGui::GetCurrentContext();
+
     g_pRuntimeObjectSystem = new RuntimeObjectSystem;
-	if( !g_pRuntimeObjectSystem->Initialise(&g_Logger, NULL) )
+    if( !g_pRuntimeObjectSystem->Initialise(&g_Logger, &g_SystemTable) )
     {
-        g_pRuntimeObjectSystem = NULL;
+        delete g_pRuntimeObjectSystem;
+        g_pRuntimeObjectSystem = 0;
         return false;
     }
+
+    g_pRuntimeObjectSystem->CleanObjectFiles();
+
+    // ensure include directories are set - use location of this file as starting point
+    FileSystemUtils::Path basePath = g_pRuntimeObjectSystem->FindFile( __FILE__ ).ParentPath();
+    FileSystemUtils::Path imguiIncludeDir = basePath / "imgui";
+    g_pRuntimeObjectSystem->AddIncludeDir( imguiIncludeDir.c_str() );
+
     return true;
 }
 

@@ -1,6 +1,7 @@
 #include "ObjectInterfacePerModule.h"
 #include "IObject.h"
 #include "RCCppMainLoop.h"
+#include "SystemTable.h"
 
 
 // RCC++ uses interface Id's to distinguish between different classes
@@ -15,6 +16,11 @@ enum InterfaceIDEnumConsoleExample
 
 struct RCCppMainLoop : RCCppMainLoopI, TInterface<IID_IRCCPP_MAIN_LOOP,IObject>
 {
+    RCCppMainLoop()
+    {
+        PerModuleInterface::g_pSystemTable->pRCCppMainLoopI = this;
+    }
+
     void MainLoop() override
     {
     }
