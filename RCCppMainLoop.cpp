@@ -4,6 +4,7 @@
 #include "SystemTable.h"
 #include "ISimpleSerializer.h"
 #include "IRuntimeObjectSystem.h"
+#include "IObjectFactorySystem.h"
 
 #include "imgui.h"
 
@@ -37,6 +38,7 @@ struct RCCppMainLoop : RCCppMainLoopI, TInterface<IID_IRCCPP_MAIN_LOOP,IObject>
     RCCppMainLoop()
     {
         PerModuleInterface::g_pSystemTable->pRCCppMainLoopI = this;
+        g_pSys->pRuntimeObjectSystem->GetObjectFactorySystem()->SetObjectConstructorHistorySize( 10 );
     }
 
     void Init( bool isFirstInit ) override
@@ -77,7 +79,7 @@ struct RCCppMainLoop : RCCppMainLoopI, TInterface<IID_IRCCPP_MAIN_LOOP,IObject>
         double time = ImGui::GetTime();
         bool bCompiling = g_pSys->pRuntimeObjectSystem->GetIsCompiling();
         double timeSinceLastCompile = time - compileEndTime;
-        if( bCompiling  || timeSinceLastCompile < SHOW_AFTER_COMPILE_TIME )
+        if( bCompiling || timeSinceLastCompile < SHOW_AFTER_COMPILE_TIME )
         {
             if( bCompiling )
             {
@@ -124,6 +126,65 @@ struct RCCppMainLoop : RCCppMainLoopI, TInterface<IID_IRCCPP_MAIN_LOOP,IObject>
             }
             ImGui::End();
             ImGui::PopStyleColor();
+        }
+
+        // Developer tools window
+        bool doRCCppUndo = false;
+        bool doRCCppRedo = false;
+
+        ImVec2 sizeAppWindow = ImGui::GetIO().DisplaySize;
+        ImGui::SetNextWindowPos( ImVec2(20,20), ImGuiCond_Appearing );
+        ImGui::SetNextWindowSize(ImVec2(200,0), ImGuiCond_Always );
+
+        ImGui::Begin( "RCC++ Developer Tools" );
+        {
+            bool bAutoCompile = g_pSys->pRuntimeObjectSystem->GetAutoCompile();
+            if(ImGui::Checkbox( "Auto Compile", &bAutoCompile ))
+            {
+                g_pSys->pRuntimeObjectSystem->SetAutoCompile( bAutoCompile );
+            } if (ImGui::IsItemHovered()) ImGui::SetTooltip( "Compilation is triggered by saving a runtime compiled file." );
+
+            ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
+            ImGui::Text( "Optimization" ); ImGui::Spacing();
+            int optLevel = g_pSys->pRuntimeObjectSystem->GetOptimizationLevel();
+            ImGui::RadioButton( "Default", &optLevel, 0 );
+            if (ImGui::IsItemHovered()) ImGui::SetTooltip( "RCCPPOPTIMIZATIONLEVEL_DEBUG in DEBUG, RCCPPOPTIMIZATIONLEVEL_PERF in RELEASE.\nThis is the default state." );
+            ImGui::RadioButton( "Debug", &optLevel, 1 ); 
+            if (ImGui::IsItemHovered()) ImGui::SetTooltip( "RCCPPOPTIMIZATIONLEVEL_DEBUG\nDefault in DEBUG.\nLow optimization, improve debug experiece." );
+            ImGui::RadioButton( "Performance", &optLevel, 2 ); 
+            if (ImGui::IsItemHovered()) ImGui::SetTooltip( "RCCPPOPTIMIZATIONLEVEL_PERF\nDefaul in RELEASE.\nOptimization for performance, debug experience may suffer." );
+            ImGui::RadioButton( "Not Set", &optLevel, 3 ); 
+            if (ImGui::IsItemHovered()) ImGui::SetTooltip( "No optimization set in compile, soeither underlying compiler default or set through SetAdditionalCompileOptions." );
+            g_pSys->pRuntimeObjectSystem->SetOptimizationLevel( (RCppOptimizationLevel)optLevel );
+
+            ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
+
+            if(ImGui::Button( "Clean" ))
+            {
+                g_pSys->pRuntimeObjectSystem->CleanObjectFiles();
+            } if (ImGui::IsItemHovered()) ImGui::SetTooltip( "Remove all compiled intermediates." );
+
+            ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
+
+            if(ImGui::Button( "Undo" ))
+            {
+                doRCCppUndo = true;
+            } if (ImGui::IsItemHovered()) ImGui::SetTooltip( "Undo the last save." ); ImGui::SameLine();
+            if(ImGui::Button( "Redo" ))
+            {
+                doRCCppRedo = true;
+            } if (ImGui::IsItemHovered()) ImGui::SetTooltip( "Redo the last save." );
+        }
+        ImGui::End();
+
+        // Do not add any code after this point as Undo/Redo will delete this
+        if( doRCCppUndo )
+        {
+            g_pSys->pRuntimeObjectSystem->GetObjectFactorySystem()->UndoObjectConstructorChange();
+        }
+        if( doRCCppRedo )
+        {
+            g_pSys->pRuntimeObjectSystem->GetObjectFactorySystem()->RedoObjectConstructorChange();
         }
     }
 };

@@ -22,11 +22,11 @@ add_subdirectory( glfw )
 add_subdirectory( RuntimeCompiledCPlusPlus/Aurora )
 
 if( UNIX )
-		SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
+        SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 endif()
 
 if( APPLE )
-		SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++" )
+        SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++" )
 endif()
 
 set( CMAKE-RCCPP-DEARIMGUI-STARTER-SRC
@@ -36,7 +36,7 @@ set( CMAKE-RCCPP-DEARIMGUI-STARTER-SRC
      imgui/imgui_demo.cpp
      imgui/imgui_draw.cpp
      imgui/imgui_widgets.cpp
-	 imgui/imconfig.h
+     imgui/imconfig.h
      imgui/examples/imgui_impl_glfw.h
      imgui/examples/imgui_impl_glfw.cpp
      imgui/examples/imgui_impl_opengl2.h
@@ -48,6 +48,6 @@ set( CMAKE-RCCPP-DEARIMGUI-STARTER-SRC
      RCCppMainLoop.cpp
      SystemTable.h
      )
-	 
+
 add_executable( CMake-RCCpp-DearImGui-starter ${CMAKE-RCCPP-DEARIMGUI-STARTER-SRC} )
 target_link_libraries( CMake-RCCpp-DearImGui-starter ${OPENGL_LIBRARIES} glfw ${GLFW_LIBRARIES} RuntimeCompiler RuntimeObjectSystem )
