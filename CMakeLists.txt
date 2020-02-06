@@ -42,6 +42,8 @@ set( CMAKE-RCCPP-DEARIMGUI-STARTER-SRC
      imgui/examples/imgui_impl_opengl2.h
      imgui/examples/imgui_impl_opengl2.cpp
      main.cpp
+     StdioLogSystem.h
+     StdioLogSystem.cpp
      )
 	 
 add_executable( CMake-RCCpp-DearImGui-starter ${CMAKE-RCCPP-DEARIMGUI-STARTER-SRC} )
