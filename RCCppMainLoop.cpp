@@ -39,6 +39,11 @@ struct RCCppMainLoop : RCCppMainLoopI, TInterface<IID_IRCCPP_MAIN_LOOP,IObject>
         ImGui::Begin("RCCppMainLoop Window" );
         ImGui::Text("You can change Window's code at runtime!");
         ImGui::End();
+
+        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+        static bool show_demo_window = true;
+        if (show_demo_window)
+        ImGui::ShowDemoWindow(&show_demo_window);
     }
 };
 

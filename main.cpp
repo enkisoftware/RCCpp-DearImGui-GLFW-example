@@ -62,11 +62,6 @@ int main( int argc, const char * argv[] )
         // Call the function in our RCC++ class
         g_SystemTable.pRCCppMainLoopI->MainLoop();
 
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        static bool show_demo_window = true;
-        if (show_demo_window)
-        ImGui::ShowDemoWindow(&show_demo_window);
-
         // Rendering
         {
             glViewport(0, 0, (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
