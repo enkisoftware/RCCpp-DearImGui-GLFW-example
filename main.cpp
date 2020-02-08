@@ -5,8 +5,6 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl2.h"
 
-#include <GLFW/glfw3.h>
-
 // RCC++ headers
 #include "RuntimeObjectSystem.h"
 
@@ -14,6 +12,8 @@
 #include "StdioLogSystem.h"
 #include "SystemTable.h"
 #include "RCCppMainLoop.h"
+
+#include <GLFW/glfw3.h>
 
 // RCC++ Data
 static StdioLogSystem           g_Logger;
