@@ -22,11 +22,11 @@ add_subdirectory( glfw )
 add_subdirectory( RuntimeCompiledCPlusPlus/Aurora )
 
 if( UNIX )
-        SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
+    SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
 endif()
 
 if( APPLE )
-        SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++" )
+    SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++" )
 endif()
 
 set( CMAKE-RCCPP-DEARIMGUI-STARTER-SRC
