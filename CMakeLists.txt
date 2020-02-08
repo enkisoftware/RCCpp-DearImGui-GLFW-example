@@ -29,6 +29,10 @@ if( APPLE )
     SET( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++" )
 endif()
 
+if( WIN32 )
+    SET( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup" )
+endif()
+
 set( CMAKE-RCCPP-DEARIMGUI-STARTER-SRC
      imgui/imgui.h
      imgui/imgui.cpp
