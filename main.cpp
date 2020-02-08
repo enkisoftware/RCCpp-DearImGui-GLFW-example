@@ -95,6 +95,9 @@ bool RCCppInit()
     }
 
     g_SystemTable.pRuntimeObjectSystem->CleanObjectFiles();
+#ifndef _WIN32
+    g_SystemTable.pRuntimeObjectSystem->SetAdditionalCompileOptions( "-std=c++11" );
+#endif
 
     // ensure include directories are set - use location of this file as starting point
     FileSystemUtils::Path basePath = g_SystemTable.pRuntimeObjectSystem->FindFile( __FILE__ ).ParentPath();
