@@ -23,6 +23,35 @@ bool RCCppInit();
 void RCCppCleanup();
 void RCCppUpdate();
 
+// Power save
+const int POWERSAVEDRAWNUM      = 3;
+int powerSaveCountDown          = POWERSAVEDRAWNUM;
+void ResetPowerSaveCountDown(){ powerSaveCountDown = 3; }
+void WindowResizeCallback( GLFWwindow* window, int width, int height ){ ResetPowerSaveCountDown(); }
+void WindowPosCallback( GLFWwindow* window, int xpos, int ypos ){ ResetPowerSaveCountDown(); }
+void KeyCallback( GLFWwindow* window, int key, int scancode, int action, int mods )
+{
+    ResetPowerSaveCountDown();
+    ImGui_ImplGlfw_KeyCallback( window, key, scancode, action, mods );
+}
+void CharCallback( GLFWwindow* window, unsigned int character )
+{
+    ResetPowerSaveCountDown();
+    ImGui_ImplGlfw_CharCallback( window, character );
+}
+void MouseButtonCallback( GLFWwindow* window, int button, int action, int mods )
+{
+    ResetPowerSaveCountDown();
+    ImGui_ImplGlfw_MouseButtonCallback( window, button, action, mods );
+}
+void MousePosCallback( GLFWwindow* window, double x, double y ){ ResetPowerSaveCountDown(); }
+void MouseWheelCallback( GLFWwindow* window, double x, double y )
+{
+    ResetPowerSaveCountDown();
+    ImGui_ImplGlfw_ScrollCallback( window, x, y );
+}
+
+
 int main( int argc, const char * argv[] )
 {
     if (!glfwInit())
@@ -32,11 +61,20 @@ int main( int argc, const char * argv[] )
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
 
+    // Power save - ensure callbacks point to the correct place
+    glfwSetWindowSizeCallback( window, WindowResizeCallback );
+    glfwSetWindowPosCallback( window, WindowPosCallback );
+    glfwSetKeyCallback( window, KeyCallback );
+    glfwSetCharCallback( window, CharCallback );
+    glfwSetMouseButtonCallback( window, MouseButtonCallback );
+    glfwSetCursorPosCallback( window, MousePosCallback );
+    glfwSetScrollCallback( window, MouseWheelCallback );
+
     // Setup Dear ImGui binding
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
 
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(window, false);
     ImGui_ImplOpenGL2_Init();
 
     // Initialize RCC++
@@ -69,6 +107,21 @@ int main( int argc, const char * argv[] )
             ImGui::Render();
             ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
             glfwSwapBuffers(window);
+        }
+
+        // Power save
+        if( g_pSys->power_save )
+        {
+            if( powerSaveCountDown )
+            {
+                --powerSaveCountDown;
+                glfwPollEvents();
+            }
+            else
+            {
+                ResetPowerSaveCountDown();
+                glfwWaitEvents();
+            }
         }
     }
 
@@ -109,7 +162,7 @@ bool RCCppInit()
 
 void RCCppCleanup()
 {
-	delete g_SystemTable.pRuntimeObjectSystem;
+    delete g_SystemTable.pRuntimeObjectSystem;
 }
 
 void RCCppUpdate()
@@ -125,5 +178,9 @@ void RCCppUpdate()
     {
         float deltaTime = 1.0f / ImGui::GetIO().Framerate;
         g_SystemTable.pRuntimeObjectSystem->GetFileChangeNotifier()->Update( deltaTime );
+    }
+    else
+    {
+        ResetPowerSaveCountDown();
     }
 }

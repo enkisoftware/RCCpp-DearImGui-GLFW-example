@@ -16,4 +16,5 @@ struct SystemTable
     RCCppMainLoopI* pRCCppMainLoopI            = 0;
     ImGuiContext*   pImContext                 = 0;
     IRuntimeObjectSystem* pRuntimeObjectSystem = NULL;
+    bool power_save                            = true;
 };

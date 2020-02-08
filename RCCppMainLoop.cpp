@@ -174,6 +174,18 @@ struct RCCppMainLoop : RCCppMainLoopI, TInterface<IID_IRCCPP_MAIN_LOOP,IObject>
             {
                 doRCCppRedo = true;
             } if (ImGui::IsItemHovered()) ImGui::SetTooltip( "Redo the last save." );
+            
+            ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
+
+            ImGui::Checkbox( "Power Save", &g_pSys->power_save );
+            if( g_pSys->power_save )
+            {
+                ImGui::TextWrapped("Animated features may stop moving when Power Save is ON and no input is detected; for example Dear ImGui Demo, Plots Widgets");
+            }
+            else
+            {
+                ImGui::TextWrapped("Save energy by turning Power Save ON: render only when input is detected");
+            }
         }
         ImGui::End();
 
