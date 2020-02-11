@@ -57,7 +57,7 @@ int main( int argc, const char * argv[] )
     if (!glfwInit())
         exit(1);
 
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "RCC++ Dear ImGui CMake starter", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "RCC++ Dear ImGui GLFW example", NULL, NULL);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
 

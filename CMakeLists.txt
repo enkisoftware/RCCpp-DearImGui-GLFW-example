@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 2.8 )
 
-project( RCCpp-DearImGui-CMake-starter )
+project( RCCpp-DearImGui-GLFW-example )
 
 find_package( OpenGL REQUIRED )
 
@@ -33,7 +33,7 @@ if( WIN32 )
     SET( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup" )
 endif()
 
-set( RCCPP-DEARIMGUI-CMAKE-STARTER-SRC
+set( RCCPP-DEARIMGUI-GLFW-EXAMPLE-SRC
      imgui/imgui.h
      imgui/imgui.cpp
      imgui/imgui_internal.h
@@ -53,12 +53,12 @@ set( RCCPP-DEARIMGUI-CMAKE-STARTER-SRC
      SystemTable.h
      )
 
-add_executable( RCCpp-DearImGui-CMake-starter ${RCCPP-DEARIMGUI-CMAKE-STARTER-SRC} )
-target_link_libraries( RCCpp-DearImGui-CMake-starter ${OPENGL_LIBRARIES} glfw ${GLFW_LIBRARIES} RuntimeCompiler RuntimeObjectSystem )
+add_executable( RCCpp-DearImGui-GLFW-example ${RCCPP-DEARIMGUI-GLFW-EXAMPLE-SRC} )
+target_link_libraries( RCCpp-DearImGui-GLFW-example ${OPENGL_LIBRARIES} glfw ${GLFW_LIBRARIES} RuntimeCompiler RuntimeObjectSystem )
 if( MSVC )
     if( ${CMAKE_VERSION} VERSION_LESS "3.6.0" )
-        message( "\n\t[ WARNING ]\n\n\tCMake version lower than 3.6.\n\n\t - Please update CMake and rerun; OR\n\t - Manually set 'RCCpp-DearImGui-CMake-starter' as StartUp Project in Visual Studio.\n" )
+        message( "\n\t[ WARNING ]\n\n\tCMake version lower than 3.6.\n\n\t - Please update CMake and rerun; OR\n\t - Manually set 'RCCpp-DearImGui-GLFW-example' as StartUp Project in Visual Studio.\n" )
     else()
-        set_property( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT RCCpp-DearImGui-CMake-starter )
+        set_property( DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT RCCpp-DearImGui-GLFW-example )
     endif()
 endif()
