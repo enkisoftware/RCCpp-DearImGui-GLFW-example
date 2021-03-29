@@ -15,7 +15,7 @@ Runtime-Compiled C++ (RCC++) is a way to reliably make major changes to C++ code
 
 RCC++ is primarily designed to shorten iteration times in development - developers can build their project, run it, make changes during runtime and see the results in a few seconds.
 
-![Short teaser of Runtime Compiled C++ Dear ImGui example running on Linux](https://github.com/juliettef/Media/blob/master/RCCpp-DearImGui-example.gif)
+![Short teaser of Runtime Compiled C++ Dear ImGui example running on Linux](https://github.com/juliettef/Media/blob/main/RCCpp-DearImGui-example.gif)
 
 Note - you can also find a similar Windows-only example in the devlog post [Runtime Compiled C++ Dear ImGui and DirectX11 Tutorial](https://www.enkisoftware.com/devlogpost-20200202-1-Runtime-Compiled-C++-Dear-ImGui-and-DirectX11-Tutorial).
 
