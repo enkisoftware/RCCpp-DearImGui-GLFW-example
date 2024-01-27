@@ -22,6 +22,7 @@
 #include <stdarg.h>
 #include <assert.h>
 #include <iostream>
+#include "FileSystemUtils.h"
 
 #ifdef _WIN32
     #include "Windows.h"
@@ -57,6 +58,9 @@ void StdioLogSystem::LogInternal(const char * format, va_list args)
 
 	std::cout << m_buff;
 #ifdef _WIN32
-	OutputDebugStringA( m_buff );
+    std::string temp = m_buff;
+    // convert from utf-8 to Wide char
+    std::wstring tempW = FileSystemUtils::_Win32Utf8ToUtf16( temp );
+	OutputDebugStringW( tempW.c_str() );
 #endif
 }
