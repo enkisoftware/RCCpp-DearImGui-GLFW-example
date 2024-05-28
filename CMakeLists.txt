@@ -66,6 +66,6 @@ endif()
 		if(MSVC)
 			set_target_properties(RCCpp-DearImGui-GLFW-example PROPERTIES COMPILE_FLAGS "/FC /utf-8")
 		else()
-			Set(CMAKE_CXX_FLAGS  "-DCOMPILE_PATH=\"\\\"$(PWD)\\\"\"")
+			add_compile_options("-DCOMPILE_PATH=\"\\\"$(PWD)\\\"\"")
 		endif()
 
